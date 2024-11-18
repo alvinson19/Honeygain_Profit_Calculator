@@ -6,6 +6,7 @@
     <title>Honeygain Profit Sharing Calculator</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* All existing styles remain unchanged */
         :root {
             --primary-color: #1a73e8;
             --primary-hover: #1557b0;
@@ -15,6 +16,7 @@
             --shadow: rgba(0, 0, 0, 0.1);
         }
 
+        /* Your existing styles here - keeping them all exactly the same */
         * {
             margin: 0;
             padding: 0;
@@ -155,7 +157,27 @@
             font-weight: 600;
         }
 
-        /* Responsive Design */
+        /* New styles for the GB converter */
+        .converter-group {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .converter-group input {
+            max-width: 200px;
+        }
+
+        .converter-group .result-text {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        /* Existing responsive styles */
         @media (max-width: 768px) {
             body {
                 padding: 1rem;
@@ -182,6 +204,12 @@
             h1 {
                 font-size: 1.75rem;
             }
+
+            /* New responsive styles for converter */
+            .converter-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
         }
     </style>
 </head>
@@ -198,6 +226,16 @@
                 <label for="totalAmount">Total Amount Earned (₹):</label>
                 <input type="number" id="totalAmount" placeholder="Enter amount after tax/fees" required>
             </div>
+
+            <!-- New GB to MB Converter section -->
+            <div class="converter-group">
+                <label for="gbInput">GB to MB Converter:</label>
+                <input type="number" id="gbInput" min="0" step="0.01" placeholder="Enter GB">
+                <button type="button" onclick="convertToMB()">Convert</button>
+                <button type="button" onclick="clearConverter()">Clear</button>
+                <span id="mbResult" class="result-text"></span>
+            </div>
+
             <table id="dataTable">
                 <thead>
                     <tr>
@@ -239,6 +277,7 @@
         </table>
     </div>
     <script>
+        // Existing functions remain unchanged
         function calculateDataShared(input) {
             const row = input.closest('tr');
             const startMB = parseFloat(row.querySelector('.start-mb').value) || 0;
@@ -301,6 +340,23 @@
                     </tr>
                 `);
             });
+        }
+
+        // New converter functions
+        function convertToMB() {
+            const gbInput = document.getElementById('gbInput');
+            const mbResult = document.getElementById('mbResult');
+            
+            if (gbInput.value !== '') {
+                const gb = parseFloat(gbInput.value);
+                const mb = gb * 1024;
+                mbResult.textContent = `${gb} GB = ${mb.toFixed(2)} MB`;
+            }
+        }
+
+        function clearConverter() {
+            document.getElementById('gbInput').value = '';
+            document.getElementById('mbResult').textContent = '';
         }
     </script>
 </body>
