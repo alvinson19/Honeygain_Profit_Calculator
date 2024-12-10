@@ -6,6 +6,7 @@
     <title>Honeygain Profit Sharing Calculator</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* Previous CSS remains the same, just remove the .converter-group and related styles */
         :root {
             --primary-color: #1a73e8;
             --primary-hover: #1557b0;
@@ -155,26 +156,6 @@
             font-weight: 600;
         }
 
-        .converter-group {
-            background-color: #f8f9fa;
-            padding: 1rem;
-            border-radius: 6px;
-            margin-bottom: 2rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .converter-group input {
-            max-width: 200px;
-        }
-
-        .converter-group .result-text {
-            font-weight: 500;
-            color: var(--text-color);
-        }
-
-        /* New styles for results section */
         .results-section {
             text-align: center;
             background-color: #f8f9fa;
@@ -223,11 +204,6 @@
                 font-size: 1.75rem;
             }
 
-            .converter-group {
-                flex-direction: column;
-                align-items: stretch;
-            }
-        }
     </style>
 </head>
 <body>
@@ -244,30 +220,22 @@
                 <input type="number" id="totalAmount" placeholder="Enter amount after tax/fees" required>
             </div>
 
-            <div class="converter-group">
-                <label for="gbInput">GB to MB Converter:</label>
-                <input type="number" id="gbInput" min="0" step="0.01" placeholder="Enter GB">
-                <button type="button" onclick="convertToMB()">Convert</button>
-                <button type="button" onclick="clearConverter()">Clear</button>
-                <span id="mbResult" class="result-text"></span>
-            </div>
-
             <table id="dataTable">
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Start MB</th>
-                        <th>End MB</th>
-                        <th>Data Shared (MB)</th>
+                        <th>Start GB</th>
+                        <th>End GB</th>
+                        <th>Data Shared (GB)</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td><input type="text" placeholder="Enter name" required></td>
-                        <td><input type="number" placeholder="Start MB" class="start-mb" oninput="calculateDataShared(this)" required></td>
-                        <td><input type="number" placeholder="End MB" class="end-mb" oninput="calculateDataShared(this)" required></td>
-                        <td><input type="number" placeholder="Data shared" class="data-shared" readonly></td>
+                        <td><input type="number" placeholder="Start GB" class="start-gb" oninput="calculateDataShared(this)" required step="0.01"></td>
+                        <td><input type="number" placeholder="End GB" class="end-gb" oninput="calculateDataShared(this)" required step="0.01"></td>
+                        <td><input type="number" placeholder="Data shared" class="data-shared" readonly step="0.01"></td>
                         <td><button type="button" class="remove-btn" onclick="removeRow(this)">Remove</button></td>
                     </tr>
                 </tbody>
@@ -284,9 +252,9 @@
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Start MB</th>
-                        <th>End MB</th>
-                        <th>Data Shared (MB)</th>
+                        <th>Start GB</th>
+                        <th>End GB</th>
+                        <th>Data Shared (GB)</th>
                         <th>Percentage Contribution</th>
                         <th>Amount Earned (₹)</th>
                     </tr>
@@ -298,10 +266,10 @@
     <script>
         function calculateDataShared(input) {
             const row = input.closest('tr');
-            const startMB = parseFloat(row.querySelector('.start-mb').value) || 0;
-            const endMB = parseFloat(row.querySelector('.end-mb').value) || 0;
-            const dataShared = endMB - startMB;
-            row.querySelector('.data-shared').value = dataShared > 0 ? dataShared : 0;
+            const startGB = parseFloat(row.querySelector('.start-gb').value) || 0;
+            const endGB = parseFloat(row.querySelector('.end-gb').value) || 0;
+            const dataShared = endGB - startGB;
+            row.querySelector('.data-shared').value = dataShared > 0 ? dataShared.toFixed(2) : 0;
         }
 
         function addRow() {
@@ -309,9 +277,9 @@
             const newRow = `
                 <tr>
                     <td><input type="text" placeholder="Enter name" required></td>
-                    <td><input type="number" placeholder="Start MB" class="start-mb" oninput="calculateDataShared(this)" required></td>
-                    <td><input type="number" placeholder="End MB" class="end-mb" oninput="calculateDataShared(this)" required></td>
-                    <td><input type="number" placeholder="Data shared" class="data-shared" readonly></td>
+                    <td><input type="number" placeholder="Start GB" class="start-gb" oninput="calculateDataShared(this)" required step="0.01"></td>
+                    <td><input type="number" placeholder="End GB" class="end-gb" oninput="calculateDataShared(this)" required step="0.01"></td>
+                    <td><input type="number" placeholder="Data shared" class="data-shared" readonly step="0.01"></td>
                     <td><button type="button" class="remove-btn" onclick="removeRow(this)">Remove</button></td>
                 </tr>
             `;
@@ -333,12 +301,12 @@
 
             rows.forEach(row => {
                 const name = row.querySelector('td:nth-child(1) input').value;
-                const startMB = parseFloat(row.querySelector('.start-mb').value) || 0;
-                const endMB = parseFloat(row.querySelector('.end-mb').value) || 0;
+                const startGB = parseFloat(row.querySelector('.start-gb').value) || 0;
+                const endGB = parseFloat(row.querySelector('.end-gb').value) || 0;
                 const dataShared = parseFloat(row.querySelector('.data-shared').value) || 0;
                 
                 if (name && dataShared > 0) {
-                    contributors.push({ name, startMB, endMB, dataShared });
+                    contributors.push({ name, startGB, endGB, dataShared });
                     totalData += dataShared;
                 }
             });
@@ -350,30 +318,14 @@
                 resultsTable.insertAdjacentHTML('beforeend', `
                     <tr>
                         <td>${contributor.name}</td>
-                        <td>${contributor.startMB}</td>
-                        <td>${contributor.endMB}</td>
-                        <td>${contributor.dataShared}</td>
+                        <td>${contributor.startGB.toFixed(2)}</td>
+                        <td>${contributor.endGB.toFixed(2)}</td>
+                        <td>${contributor.dataShared.toFixed(2)}</td>
                         <td>${percentage}%</td>
                         <td>₹${earned}</td>
                     </tr>
                 `);
             });
-        }
-
-        function convertToMB() {
-            const gbInput = document.getElementById('gbInput');
-            const mbResult = document.getElementById('mbResult');
-            
-            if (gbInput.value !== '') {
-                const gb = parseFloat(gbInput.value);
-                const mb = gb * 1024;
-                mbResult.textContent = `${gb} GB = ${mb.toFixed(2)} MB`;
-            }
-        }
-
-        function clearConverter() {
-            document.getElementById('gbInput').value = '';
-            document.getElementById('mbResult').textContent = '';
         }
 
         function updateDateTime() {
